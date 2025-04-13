@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -35,19 +36,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -97,5 +91,24 @@
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .weather-card {
+    @apply bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden transition-all duration-300;
+  }
+
+  .weather-card-hover {
+    @apply hover:shadow-lg hover:scale-[1.02] transition-all duration-300;
+  }
+  
+  .glass-card {
+    @apply bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-700/30 rounded-xl shadow-md;
+  }
+  
+  .weather-gradient-bg {
+    @apply bg-gradient-to-br from-weather-soft-blue to-weather-light-purple dark:from-slate-800 dark:to-slate-700;
   }
 }
