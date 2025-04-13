@@ -8,6 +8,11 @@ import HourlyForecast from "@/components/HourlyForecast";
 import WeatherChart from "@/components/WeatherChart";
 import ThemeToggle from "@/components/ThemeToggle";
 import LocationButton from "@/components/LocationButton";
+import WeatherAlerts from "@/components/WeatherAlerts";
+import AirQualityCard from "@/components/AirQualityCard";
+import AstroCard from "@/components/AstroCard";
+import RealFeelIndicator from "@/components/RealFeelIndicator";
+import PrecipitationRadar from "@/components/PrecipitationRadar";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { toast } from "sonner";
 
@@ -50,9 +55,52 @@ const Index = () => {
 
           <main className="animate-fade-in">
             <CurrentWeather data={weatherData} />
+            
+            {weatherData.alerts && weatherData.alerts.length > 0 && (
+              <div className="mt-6">
+                <WeatherAlerts alerts={weatherData.alerts} />
+              </div>
+            )}
+            
             <ForecastSection forecasts={weatherData.dailyForecast} />
             <HourlyForecast hourlyData={weatherData.hourlyForecast} />
-            <WeatherChart hourlyData={weatherData.hourlyForecast} />
+            
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <WeatherChart hourlyData={weatherData.hourlyForecast} />
+              
+              <div className="grid grid-cols-1 gap-4">
+                {weatherData.airQuality && (
+                  <AirQualityCard 
+                    aqi={weatherData.airQuality.aqi} 
+                    mainPollutant={weatherData.airQuality.mainPollutant}
+                  />
+                )}
+                
+                {weatherData.currentWeather.realFeelShade && (
+                  <RealFeelIndicator 
+                    temp={weatherData.currentWeather.temp}
+                    realFeel={weatherData.currentWeather.feelsLike}
+                    realFeelShade={weatherData.currentWeather.realFeelShade}
+                  />
+                )}
+              </div>
+            </div>
+            
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {weatherData.astronomy && (
+                <AstroCard 
+                  sunrise={weatherData.astronomy.sunrise}
+                  sunset={weatherData.astronomy.sunset}
+                  moonPhase={weatherData.astronomy.moonPhase}
+                  dayLength={weatherData.astronomy.dayLength}
+                />
+              )}
+              
+              <PrecipitationRadar 
+                radarImages={[]} 
+                city={weatherData.city} 
+              />
+            </div>
           </main>
 
           <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
