@@ -16,11 +16,13 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const [suggestions, setSuggestions] = useState<{ city: string; country: string }[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
+        setIsFocused(false);
       }
     };
 
@@ -50,6 +52,7 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
   const handleCitySelect = (city: string) => {
     setSearchTerm(city);
     setShowSuggestions(false);
+    setIsFocused(false);
     onCitySelect(city);
   };
 
@@ -69,15 +72,23 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
 
   return (
     <div ref={searchRef} className="relative w-full max-w-md">
-      <div className="relative flex items-center">
-        <Search className="absolute left-3 text-gray-400" size={isMobile ? 16 : 18} />
+      <div className={`relative flex items-center transition-all duration-200 ${isFocused ? 'scale-[1.02]' : ''}`}>
+        <Search 
+          className={`absolute left-3 transition-colors duration-200 ${isFocused ? 'text-weather-blue' : 'text-gray-400'}`} 
+          size={isMobile ? 16 : 18} 
+        />
         <Input
           type="text"
           placeholder={isMobile ? "Search location..." : "Search for a city or country..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 pr-10 bg-white dark:bg-slate-800 border-weather-soft-blue dark:border-gray-700 rounded-lg text-sm sm:text-base h-9 sm:h-10"
-          onFocus={() => searchTerm && setShowSuggestions(true)}
+          onFocus={() => {
+            setIsFocused(true);
+            searchTerm && setShowSuggestions(true);
+          }}
+          className={`pl-10 pr-10 bg-white dark:bg-slate-800 border-weather-soft-blue dark:border-gray-700 rounded-lg text-sm sm:text-base h-9 sm:h-10 transition-all duration-200 ${
+            isFocused ? 'ring-2 ring-weather-blue dark:ring-weather-light-purple border-transparent' : ''
+          }`}
         />
         {searchTerm && (
           <Button
@@ -102,7 +113,7 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
                 {cities.map(location => (
                   <div
                     key={`${location.city}-${location.country}`}
-                    className="px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer transition-colors duration-150"
                     onClick={() => handleCitySelect(location.city)}
                   >
                     <div className="font-medium text-sm sm:text-base">{location.city}</div>
