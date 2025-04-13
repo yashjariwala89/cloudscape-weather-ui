@@ -35,7 +35,9 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
           location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
           location.country.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setSuggestions(filtered);
+      
+      // Limit to first 10 matches to prevent overwhelming the UI
+      setSuggestions(filtered.slice(0, 10));
       setShowSuggestions(true);
     } else {
       setSuggestions([]);
@@ -53,6 +55,15 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
     setSearchTerm("");
     setSuggestions([]);
   };
+
+  // Group suggestions by country for better organization
+  const groupedSuggestions: Record<string, {city: string; country: string}[]> = {};
+  suggestions.forEach(suggestion => {
+    if (!groupedSuggestions[suggestion.country]) {
+      groupedSuggestions[suggestion.country] = [];
+    }
+    groupedSuggestions[suggestion.country].push(suggestion);
+  });
 
   return (
     <div ref={searchRef} className="relative w-full max-w-md">
@@ -79,19 +90,30 @@ const SearchBar = ({ onCitySelect }: SearchBarProps) => {
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute mt-1 w-full bg-white dark:bg-slate-800 shadow-lg rounded-lg z-10 border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto animate-fade-in">
+        <div className="absolute mt-1 w-full bg-white dark:bg-slate-800 shadow-lg rounded-lg z-10 border border-gray-200 dark:border-gray-700 max-h-80 overflow-y-auto animate-fade-in">
           <ul className="py-1">
-            {suggestions.map((location) => (
-              <li
-                key={`${location.city}-${location.country}`}
-                className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
-                onClick={() => handleCitySelect(location.city)}
-              >
-                <div className="font-medium">{location.city}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">{location.country}</div>
+            {Object.entries(groupedSuggestions).map(([country, cities]) => (
+              <li key={country} className="mb-2">
+                <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-slate-700">
+                  {country}
+                </div>
+                {cities.map(location => (
+                  <div
+                    key={`${location.city}-${location.country}`}
+                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
+                    onClick={() => handleCitySelect(location.city)}
+                  >
+                    <div className="font-medium">{location.city}</div>
+                  </div>
+                ))}
               </li>
             ))}
           </ul>
+          {suggestions.length >= 10 && (
+            <div className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+              Showing top 10 results. Type more to refine your search.
+            </div>
+          )}
         </div>
       )}
     </div>
