@@ -103,10 +103,10 @@ const Index = () => {
             </div>
           </main>
 
-          <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
+          {/* <footer className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
             <p>© 2025 Cloudscape Weather Dashboard. Made with ❤️ and React.</p>
             <p className="mt-1">Note: This is a demonstration using mock data.</p>
-          </footer>
+          </footer> */}
         </div>
       </div>
     </ThemeProvider>
